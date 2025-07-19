@@ -3,7 +3,7 @@ import axios from "axios";
 // Automatically switch between local and production
 const BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://your-backend-domain.com/api" // <-- Change when deployed
+    ? "https://ai-chatbot-backend-owxc.onrender.com/api" // <-- Fixed path
     : "http://localhost:5000/api";
 
 const chatAPI = axios.create({

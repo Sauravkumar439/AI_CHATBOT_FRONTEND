@@ -3,18 +3,17 @@ import axios from "axios";
 
 /* =========================================================
    Base URL (works locally & after deployment)
-   In production assume backend is reverse proxied at /api
 ========================================================= */
 const AUTH_BASE =
   process.env.NODE_ENV === "production"
-    ? `${window.location.origin}/api/auth`
-    : "http://localhost:5000/api/auth";
+    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth" // Production backend
+    : "http://localhost:5000/api/auth"; // Local backend
 
 /* =========================================================
    Helpers
 ========================================================= */
 
-// Build auth headers with token (from localStorage first, fallback sessionStorage)
+// Build auth headers with token
 function authHeaders() {
   const token =
     localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -22,12 +21,10 @@ function authHeaders() {
   return { Authorization: `Bearer ${token}` };
 }
 
-// Generic error normalizer
+// Normalize error
 function normalizeError(error, fallback = "Request failed") {
   const msg =
-    error?.response?.data?.message ||
-    error?.message ||
-    fallback;
+    error?.response?.data?.message || error?.message || fallback;
   return new Error(msg);
 }
 
@@ -53,17 +50,11 @@ async function authRequest(method, url, data) {
    Auth APIs
 ========================================================= */
 
-/**
- * Login user
- * @param {string} email
- * @param {string} password
- * @param {object} options { remember: boolean (default true), autoStore: boolean (default true) }
- */
+// Login
 export async function loginUser(email, password, options = {}) {
   const { remember = true, autoStore = true } = options;
   try {
     const res = await axios.post(`${AUTH_BASE}/login`, { email, password });
-    // Expected shape: { success, message, token, user: { id, name, email, avatar } }
     if (autoStore && res.data?.token) {
       const storage = remember ? localStorage : sessionStorage;
       storage.setItem("token", res.data.token);
@@ -77,14 +68,7 @@ export async function loginUser(email, password, options = {}) {
   }
 }
 
-/**
- * Signup user
- * @param {string} name
- * @param {string} email
- * @param {string} password
- * @param {string} avatar (optional)
- * @param {object} options { remember: boolean, autoStore: boolean }
- */
+// Signup
 export async function signupUser(
   name,
   email,
@@ -113,13 +97,9 @@ export async function signupUser(
   }
 }
 
-/**
- * Get current user (/me)
- * Syncs local cache if successful
- */
+// Get current user
 export async function getMe({ syncLocal = true } = {}) {
   const data = await authRequest("get", "/me");
-  // Backend returns both flat + user object. Prefer data.user if present.
   const userObj = data.user || {
     id: data.id,
     name: data.name,
@@ -136,10 +116,7 @@ export async function getMe({ syncLocal = true } = {}) {
   return userObj;
 }
 
-/**
- * Update profile (name, avatar)
- * @param {object} payload { name?, avatar? }
- */
+// Update profile
 export async function updateProfile(payload) {
   const data = await authRequest("put", "/profile", payload);
   if (data?.user) {
@@ -152,25 +129,17 @@ export async function updateProfile(payload) {
   return data;
 }
 
-/**
- * Change password
- * @param {string} oldPassword
- * @param {string} newPassword
- */
+// Change password
 export async function changePassword(oldPassword, newPassword) {
   return await authRequest("put", "/password", { oldPassword, newPassword });
 }
 
-/**
- * Validate token (optional utility)
- */
+// Validate token
 export async function validateToken() {
   return await authRequest("get", "/validate");
 }
 
-/* =========================================================
-   Utility for manual logout
-========================================================= */
+// Logout utility
 export function clearAuth() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
