@@ -5,7 +5,7 @@ import Signup from "./pages/Signup";
 import Chat from "./pages/Chat";
 import Navbar from "./components/Navbar";
 import Landing from "./pages/Landing";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile";
 import EditProfile from "./pages/EditProfile";
 import ChangePassword from "./pages/ChangePassword";
 import { Toaster } from "react-hot-toast";          // <-- Toast provider
