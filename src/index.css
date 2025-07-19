@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+
+/* Example mild scale-in animation for toast container */
+[data-sonner-toaster] .react-hot-toast {
+  animation: fadeScale 0.25s ease;
+}
+
+@keyframes fadeScale {
+  from { opacity: 0; transform: scale(.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+
