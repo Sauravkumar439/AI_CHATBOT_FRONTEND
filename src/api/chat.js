@@ -2,8 +2,9 @@ import axios from "axios";
 
 // Automatically switch between local and production
 const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://ai-chatbot-backend-owxc.onrender.com/api";
+  import.meta.env.PROD
+    ? "https://ai-chatbot-backend-owxc.onrender.com/api"
+    : "http://localhost:5000/api";
 
 const chatAPI = axios.create({
   baseURL: BASE_URL,
@@ -16,7 +17,13 @@ export const sendMessage = async (message) => {
     const response = await chatAPI.post("/chat", { message });
     return response.data.reply;
   } catch (error) {
-    console.error("Chat API Error:", error.response?.data || error.message);
+    console.error("Chat API Error:", {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+      code: error.code,
+    });
+
     if (error.code === "ECONNABORTED") {
       return "⚠️ Request timed out. Try again.";
     }

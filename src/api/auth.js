@@ -1,12 +1,12 @@
-// src/api/auth.js
 import axios from "axios";
 
 /* =========================================================
    Base URL (works locally & after deployment)
 ========================================================= */
 const AUTH_BASE =
-  process.env.NODE_ENV === "production"
-    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth";
+  import.meta.env.PROD
+    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth"
+    : "http://localhost:5000/api/auth";
 
 /* =========================================================
    Helpers
@@ -14,16 +14,17 @@ const AUTH_BASE =
 
 // Build auth headers with token
 function authHeaders() {
-  const token =
-    localStorage.getItem("token") || sessionStorage.getItem("token");
-  if (!token) return {};
-  return { Authorization: `Bearer ${token}` };
+  try {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
 }
 
 // Normalize error
 function normalizeError(error, fallback = "Request failed") {
-  const msg =
-    error?.response?.data?.message || error?.message || fallback;
+  const msg = error?.response?.data?.message || error?.message || fallback;
   return new Error(msg);
 }
 
@@ -45,6 +46,14 @@ async function authRequest(method, url, data) {
   }
 }
 
+// Persist auth data
+function persistAuth(data, { remember, autoStore }) {
+  if (!autoStore || !data?.token) return;
+  const storage = remember ? localStorage : sessionStorage;
+  storage.setItem("token", data.token);
+  if (data.user) storage.setItem("user", JSON.stringify(data.user));
+}
+
 /* =========================================================
    Auth APIs
 ========================================================= */
@@ -54,13 +63,7 @@ export async function loginUser(email, password, options = {}) {
   const { remember = true, autoStore = true } = options;
   try {
     const res = await axios.post(`${AUTH_BASE}/login`, { email, password });
-    if (autoStore && res.data?.token) {
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem("token", res.data.token);
-      if (res.data.user) {
-        storage.setItem("user", JSON.stringify(res.data.user));
-      }
-    }
+    persistAuth(res.data, { remember, autoStore });
     return res.data;
   } catch (err) {
     throw normalizeError(err, "Login failed");
@@ -68,13 +71,7 @@ export async function loginUser(email, password, options = {}) {
 }
 
 // Signup
-export async function signupUser(
-  name,
-  email,
-  password,
-  avatar = "",
-  options = {}
-) {
+export async function signupUser(name, email, password, avatar = "", options = {}) {
   const { remember = true, autoStore = true } = options;
   try {
     const res = await axios.post(`${AUTH_BASE}/register`, {
@@ -83,13 +80,7 @@ export async function signupUser(
       password,
       avatar
     });
-    if (autoStore && res.data?.token) {
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem("token", res.data.token);
-      if (res.data.user) {
-        storage.setItem("user", JSON.stringify(res.data.user));
-      }
-    }
+    persistAuth(res.data, { remember, autoStore });
     return res.data;
   } catch (err) {
     throw normalizeError(err, "Signup failed");
@@ -140,8 +131,10 @@ export async function validateToken() {
 
 // Logout utility
 export function clearAuth() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  sessionStorage.removeItem("token");
-  sessionStorage.removeItem("user");
+  try {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+  } catch {}
 }
