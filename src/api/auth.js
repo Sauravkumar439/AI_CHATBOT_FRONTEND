@@ -6,7 +6,7 @@ import axios from "axios";
 ========================================================= */
 const AUTH_BASE =
   process.env.NODE_ENV === "production"
-    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth";
+    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth":
 
 /* =========================================================
    Helpers
