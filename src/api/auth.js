@@ -4,14 +4,9 @@ import axios from "axios";
    Base URL (works locally & after deployment)
 ========================================================= */
 const AUTH_BASE =
-<<<<<<< HEAD
   import.meta.env.PROD
     ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth"
     : "http://localhost:5000/api/auth";
-=======
-  process.env.NODE_ENV === "production"
-    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth":
->>>>>>> 560ee06e4bf566e88b3039bd04de9a1a6d8a9202
 
 /* =========================================================
    Helpers
