@@ -3,9 +3,14 @@ import axios from "axios";
 /* =========================================================
    Base URL (works locally & after deployment)
 ========================================================= */
+// const AUTH_BASE =
+//   import.meta.env.PROD
+//     ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth"
+//     : "http://localhost:5000/api/auth";
+
 const AUTH_BASE =
   import.meta.env.PROD
-    ? "https://ai-chatbot-backend-owxc.onrender.com/api/auth"
+    ? "https://ai-chatbot-backend-mu.vercel.app/"
     : "http://localhost:5000/api/auth";
 
 /* =========================================================
