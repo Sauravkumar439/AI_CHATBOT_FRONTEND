@@ -6,7 +6,6 @@ const BASE_URL =
     ? "https://ai-chatbot-backend-owxc.onrender.com/api"
     : "http://localhost:5000/api";
 
-
 const chatAPI = axios.create({
   baseURL: BASE_URL,
   timeout: 20000, // 20 seconds timeout
