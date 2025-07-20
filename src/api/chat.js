@@ -10,7 +10,6 @@ const chatAPI = axios.create({
   baseURL: BASE_URL,
   timeout: 20000, // 20 seconds timeout
 });
-
 // Send message to backend
 export const sendMessage = async (message) => {
   try {
