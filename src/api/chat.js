@@ -1,9 +1,14 @@
 import axios from "axios";
 
 // Automatically switch between local and production
+// const BASE_URL =
+//   import.meta.env.PROD
+//     ? "https://ai-chatbot-backend-owxc.onrender.com/api"
+//     : "http://localhost:5000/api";
+
 const BASE_URL =
   import.meta.env.PROD
-    ? "https://ai-chatbot-backend-owxc.onrender.com/api"
+    ? "https://ai-chatbot-backend-mu.vercel.app/"
     : "http://localhost:5000/api";
 
 const chatAPI = axios.create({
